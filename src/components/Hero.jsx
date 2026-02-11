@@ -18,7 +18,7 @@ const Hero = () => {
 
     gsap.from(heroSplit.chars, {
       yPercent: 60,
-      duration: 1.8,
+      duration: 1.5,
       ease: "expo.out",
       stagger: 0.05,
     });
@@ -66,7 +66,7 @@ const Hero = () => {
   return (
     <>
       <section id="hero" className="noisy">
-        <h1 className="title">COCKTAIL</h1>
+        <h1 className="title">MOJITO</h1>
 
         <img
           src="/images/hero-left-leaf.png"
