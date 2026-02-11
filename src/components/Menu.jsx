@@ -1,0 +1,130 @@
+import React, { useRef, useState } from "react";
+import { sliderLists } from "../../constants";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+const Menu = () => {
+  const contentRef = useRef();
+  const [currIndex, setCurrIndex] = useState(0);
+
+  useGSAP(() => {
+    gsap.fromTo("#title", { opacity: 0 }, { opacity: 1, duration: 1 });
+    gsap.fromTo(
+      ".cocktail img",
+      { opacity: 0, xPercent: -100 },
+      { opacity: 1, duration: 1, xPercent: 0, ease: "power1.inOut" },
+    );
+    gsap.fromTo(
+      ".details h2",
+      { opacity: 0, yPercent: 100 },
+      { yPercent: 0, opacity: 1, duration: 1, ease: "power1.inOut" },
+    );
+    gsap.fromTo(
+      ".details p",
+      { opacity: 0, yPercent: 100 },
+      { yPercent: 0, opacity: 1, duration: 1, ease: "power1.inOut" },
+    );
+  }, [currIndex]);
+
+  const totalCocktails = sliderLists.length;
+
+  const goToSlide = (index) => {
+    const newIndex = (index + totalCocktails) % totalCocktails;
+
+    setCurrIndex(newIndex);
+  };
+
+  const getCocktailAt = (indexOffset) => {
+    return sliderLists[
+      (currIndex + indexOffset + totalCocktails) % totalCocktails
+    ];
+  };
+
+  const currCocktail = getCocktailAt(0);
+  const nextCocktail = getCocktailAt(1);
+  const prevCocktail = getCocktailAt(-1);
+  return (
+    <section id="menu" aria-labelledby="menu-heading">
+      <img
+        src="/images/slider-left-leaf.png"
+        alt="left-leaf"
+        id="m-left-leaf"
+      />
+      <img
+        src="/images/slider-right-leaf.png"
+        alt="right-leaf"
+        id="m-right-leaf"
+      />
+
+      <h2 className="sr-only" id="menu-heading">
+        Cocktail Menu
+      </h2>
+
+      <nav aria-label="Cocktail Navigation" className="cocktail-tabs">
+        {sliderLists.map((cocktail, i) => {
+          const isActive = i === currIndex;
+
+          return (
+            <button
+              key={cocktail.id}
+              className={`${isActive ? "text-white border-white" : "text-white/50 border-white/50"} `}
+              onClick={() => goToSlide(i)}
+            >
+              {cocktail.name}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="content">
+        <div className="arrows">
+          <button
+            className="text-left"
+            onClick={() => goToSlide(currIndex - 1)}
+          >
+            <span>{prevCocktail.name}</span>
+            <img
+              src="/images/right-arrow.png"
+              alt="right-arrow"
+              aria-hidden="true"
+            />
+          </button>
+
+          <button
+            className="text-right"
+            onClick={() => goToSlide(currIndex + 1)}
+          >
+            <span>{nextCocktail.name}</span>
+            <img
+              src="/images/left-arrow.png"
+              alt="left-arrow"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+
+        <div className="cocktail">
+          <img
+            src={currCocktail.image}
+            alt="current-cocktail"
+            className="object-contain"
+          />
+        </div>
+
+        <div className="recipe">
+          <div ref={contentRef} className="info">
+            <p>Recipe for:</p>
+            <p id="title">{currCocktail.name}</p>
+          </div>
+
+          <div className="details">
+            <h2>{currCocktail.title}</h2>
+            <p>{currCocktail.description}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Menu;
